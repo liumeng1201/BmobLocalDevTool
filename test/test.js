@@ -7,7 +7,7 @@ tool.initialize(options.app_key, options.rest_key);
 
 function httpTest() {
 //调用hello.js云端代码
-    var hello = require("../cloud/hello.js").hello;
+    var hello = require("../cloud/hellobak.js").hellobak;
     tool.test(hello);
 }
 

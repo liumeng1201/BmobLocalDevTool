@@ -80,19 +80,47 @@ function getHistoryDatas(modules) {
     });
 }
 
-function onRequest(request, response, modules) {
-    /*
-     var myDate = new Date();
-     var yearMin = 2015;
-     var yearMax = myDate.getFullYear();
-     for (var year = yearMin; year <= yearMax; year++) {
-     for (var month = 1; month <= 12; month++) {
-     for (var day = 1; day <= 31; day++) {
-     var url = "http://gank.io/api/day/" + year + "/" + month + "/" + day;
-     requestDatas(modules, url);
-     }
-     }
-     }*/
-    getHistoryDatas(modules);
+function delItem(modules, item) {
+    var db = modules.oData;
+    db.find({
+        "table": "GankPosts",
+        "where": {"id": item.id}
+    }, function (err, data) {
+        var resultObject = JSON.parse(data);
+        var tmp = resultObject.results;
+        for (var j in tmp) {
+            var itemDel = tmp[j];
+            if (itemDel.objectId != item.objectId) {
+                db.remove({
+                    "table": "GankPosts",
+                    "objectId": itemDel.objectId
+                }, function (err, data) {
+                    if (err) {
+                        console.log("delete " + itemDel.objectId + " failed");
+                    } else {
+                        console.log("id = " + item.objectId + ", delete " + itemDel.objectId + " success");
+                    }
+                });
+            }
+        }
+    });
 }
-exports.hello = onRequest;
+
+function removeRepeat(modules) {
+    var db = modules.oData;
+    db.find({
+        "table": "GankPosts"
+    }, function (err, data) {
+        var results = (JSON.parse(data)).results;
+        for (var i in results) {
+            var item = results[i];
+            delItem(modules, item);
+        }
+    });
+}
+
+function onRequest(request, response, modules) {
+//    getHistoryDatas(modules);
+    removeRepeat(modules);
+}
+exports.hellobak = onRequest;

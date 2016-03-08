@@ -5,6 +5,14 @@ var options = require("../AppConfig.json");
 
 tool.initialize(options.app_key, options.rest_key);
 
+function httpTest() {
+//调用hello.js云端代码
+    var hello = require("../cloud/hello.js").hello;
+    tool.test(hello);
+}
+
+httpTest();
+
 function local() {
 //调用hello.js云端代码
     var hello = require("../cloud/hello.js").hello;
